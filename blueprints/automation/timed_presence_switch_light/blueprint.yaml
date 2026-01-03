@@ -1,7 +1,7 @@
 blueprint:
   name: Timed Switch or Light with Presence Reset
   description: >-
-    Turns off a switch or light after a configurable delay when a presence sensor
+    Turns off a switch or light after a  configurable delay when a presence sensor
     no longer detects anyone. If presence is detected again before the timer
     expires, the timer for that specific activation is cancelled.
   domain: automation
