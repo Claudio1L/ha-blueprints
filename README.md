@@ -1,12 +1,10 @@
-# Timed Switch or Light with Presence Reset (Home Assistant Blueprint)
+# Home Assistant Blueprints
 
-Turns off a **switch or light** after a configurable delay when presence is no longer detected.
-If presence returns before the delay expires, the timer is cancelled.
+This repository contains a collection of Home Assistant blueprints.
 
-## Import (recommended)
+## Available Blueprints
 
-Home Assistant → Settings → Automations & Scenes → Blueprints → Import Blueprint
-
-Paste this URL:
-
-https://raw.githubusercontent.com/Claudio1L/ha-blueprints/main/blueprints/automation/timed_presence_switch_light/timed_presence_switch_light.yaml
+### Timed Switch or Light with Presence Reset
+- Domain: automation
+- Description: Turns off a switch or light after a configurable delay when presence is no longer detected.
+- Import URL: https://raw.githubusercontent.com/Claudio1L/ha-blueprints/main/blueprints/automation/timed_presence_switch_light/blueprint.yaml
