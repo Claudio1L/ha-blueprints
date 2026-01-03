@@ -1,0 +1,74 @@
+blueprint:
+  name: Timed Switch or Light with Presence Reset
+  description: >-
+    Turns off a switch or light after a configurable delay when a presence sensor
+    no longer detects anyone. If presence is detected again before the timer
+    expires, the timer for that specific activation is cancelled.
+  domain: automation
+
+  input:
+    target_entity:
+      name: Switch or Light
+      description: The switch or light to be controlled.
+      selector:
+        entity:
+          domain:
+            - switch
+            - light
+
+    presence_sensor:
+      name: Presence Sensor
+      description: The binary sensor (e.g. motion detector) used for presence detection.
+      selector:
+        entity:
+          domain: binary_sensor
+
+    delay_minutes:
+      name: Delay (minutes)
+      description: >-
+        Time in minutes (from 1 to 120) to wait before turning off the entity
+        after presence is no longer detected. The timer is cancelled if
+        presence returns during this period.
+      default: 30
+      selector:
+        number:
+          min: 1
+          max: 120
+          unit_of_measurement: "minutes"
+          mode: slider
+
+mode: restart
+
+trigger:
+  - platform: state
+    entity_id: !input presence_sensor
+    to: 'off'
+
+action:
+  - alias: "Check if the entity is on before starting the timer"
+    if:
+      - condition: state
+        entity_id: !input target_entity
+        state: 'on'
+    then:
+      - alias: "Wait for the specified delay or for presence to return"
+        wait_for_trigger:
+          - platform: state
+            entity_id: !input presence_sensor
+            to: 'on'
+        timeout:
+          minutes: !input delay_minutes
+        continue_on_timeout: true
+
+      - alias: "Check if the timeout expired AND the entity is still on"
+        if:
+          - condition: template
+            value_template: "{{ wait.trigger == none }}"
+          - condition: state
+            entity_id: !input target_entity
+            state: 'on'
+        then:
+          - alias: "Turn off the entity because the timer expired and presence did not return"
+            service: homeassistant.turn_off
+            target:
+              entity_id: !input target_entity
